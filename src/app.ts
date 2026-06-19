@@ -1,13 +1,13 @@
 import express from "express";
+import routes from "./routes";
+import { errorMiddleware } from "shared/middlewares/error.middleware";
 
 const app = express();
 
 app.use(express.json());
 
-app.get("/health", (req, res) => {
-  return res.status(200).json({
-    status: "ok",
-  });
-});
+app.use(routes);
+
+app.use(errorMiddleware);
 
 export default app;
