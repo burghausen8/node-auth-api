@@ -1,9 +1,18 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AuthService {
+  constructor(private readonly prisma: PrismaService) {}
+
   async login(email: string, password: string) {
-    if (email !== 'admin@email.com' || password !== '123456') {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if (!user || user.password !== password) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
