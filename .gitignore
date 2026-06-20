@@ -49,3 +49,5 @@ Thumbs.db
 # Environment files with credentials (DO NOT COMMIT)
 src/environments/environment.ts
 src/environments/environment.prod.ts
+
+/src/generated/prisma
