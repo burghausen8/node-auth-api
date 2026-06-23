@@ -34,4 +34,9 @@ export class CartController {
   update(@Req() req, @Param('id') id: string, @Body() dto: UpdateCartItemDto) {
     return this.service.update(req.user.id, id, dto);
   }
+
+  @Get('external')
+  getExternal() {
+    return this.service.testFromExternalApi();
+  }
 }

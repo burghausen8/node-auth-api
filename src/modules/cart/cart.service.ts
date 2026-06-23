@@ -6,10 +6,15 @@ import {
 import { UpdateCartItemDto } from './dto /update-cart-item.dto';
 import { CartRepository } from './repositories/cart.repository';
 import { CreateCartItemDto } from './dto /create-cart-item.dto';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class CartService {
-  constructor(private repository: CartRepository) {}
+  constructor(
+    private repository: CartRepository,
+    private readonly httpService: HttpService,
+  ) {}
 
   async create(userId: string, dto: CreateCartItemDto) {
     return this.repository.create({
@@ -57,5 +62,13 @@ export class CartService {
     }
 
     return this.repository.update(itemId, dto);
+  }
+
+  async testFromExternalApi() {
+    const { data } = await firstValueFrom(
+      this.httpService.get('https://fakestoreapi.com/products'),
+    );
+
+    return data;
   }
 }
