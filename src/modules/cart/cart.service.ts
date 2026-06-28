@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { UpdateCartItemDto } from './dto /update-cart-item.dto';
 import { CartRepository } from './repositories/cart.repository';
-import { CreateCartItemDto } from './dto /create-cart-item.dto';
+import { AddItemToCartDto } from './dto /add-item-to-cart.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 
@@ -16,15 +16,8 @@ export class CartService {
     private readonly httpService: HttpService,
   ) {}
 
-  async create(userId: string, dto: CreateCartItemDto) {
-    return this.repository.create({
-      ...dto,
-      user: {
-        connect: {
-          id: userId,
-        },
-      },
-    });
+  async addItem(userId: string, dto: AddItemToCartDto) {
+    return this.repository.addItem(userId, dto.id, dto.quantity);
   }
 
   async findAll(userId: string, page: number, limit: number) {
@@ -47,6 +40,14 @@ export class CartService {
       page,
       limit,
       totalPages: Math.ceil(total / limit),
+    };
+  }
+
+  async findItemsByUser(userId: string) {
+    const items = await this.repository.findItemsByUser(userId);
+
+    return {
+      items,
     };
   }
 

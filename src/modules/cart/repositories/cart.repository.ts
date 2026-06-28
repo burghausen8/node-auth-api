@@ -1,16 +1,32 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { firstValueFrom } from 'rxjs';
+
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CartItemWithProduct } from '../types/cart-item-with-product.type';
 
 @Injectable()
 export class CartRepository {
   constructor(private prisma: PrismaService) {}
 
-  create(data: Prisma.CartItemCreateInput) {
+  async addItem(userId: string, productId: string, quantity: number) {
     return this.prisma.cartItem.create({
-      data,
+      data: {
+        quantity,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+        product: {
+          connect: {
+            id: productId,
+          },
+        },
+      },
+      include: {
+        product: true,
+      },
     });
   }
 
@@ -21,6 +37,19 @@ export class CartRepository {
       },
       skip,
       take,
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+  findItemsByUser(userId: string): Promise<CartItemWithProduct[]> {
+    return this.prisma.cartItem.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        product: true,
+      },
       orderBy: {
         createdAt: 'desc',
       },

@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { PaginationDto } from './dto /pagination.dto';
-import { CreateCartItemDto } from './dto /create-cart-item.dto';
+import { AddItemToCartDto } from './dto /add-item-to-cart.dto';
 import { UpdateCartItemDto } from './dto /update-cart-item.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -25,9 +25,9 @@ export class CartController {
     return this.service.findAll(req.user.id, query.page, query.limit);
   }
 
-  @Post()
-  create(@Req() req, @Body() dto: CreateCartItemDto) {
-    return this.service.create(req.user.id, dto);
+  @Post('items')
+  addItem(@Req() req, @Body() dto: AddItemToCartDto) {
+    return this.service.addItem(req.user.id, dto);
   }
 
   @Patch(':id')

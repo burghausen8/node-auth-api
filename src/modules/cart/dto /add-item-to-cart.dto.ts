@@ -1,9 +1,10 @@
+import { Optional } from '@nestjs/common';
 import { IsString, MinLength, IsInt, Min } from 'class-validator';
 
-export class CreateCartItemDto {
+export class AddItemToCartDto {
   @IsString()
   @MinLength(2)
-  name: string;
+  id: string;
 
   @IsInt()
   @Min(1)
