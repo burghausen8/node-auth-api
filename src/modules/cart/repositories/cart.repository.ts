@@ -40,6 +40,9 @@ export class CartRepository {
       orderBy: {
         createdAt: 'desc',
       },
+      include: {
+        product: true,
+      },
     });
   }
   findItemsByUser(userId: string): Promise<CartItemWithProduct[]> {
@@ -78,6 +81,20 @@ export class CartRepository {
         id,
       },
       data,
+    });
+  }
+  findByUserAndProduct(userId: string, productId: string) {
+    return this.prisma.cartItem.findFirst({
+      where: {
+        userId,
+        productId,
+      },
+    });
+  }
+  updateQuantity(id: string, quantity: number) {
+    return this.prisma.cartItem.update({
+      where: { id },
+      data: { quantity },
     });
   }
 }

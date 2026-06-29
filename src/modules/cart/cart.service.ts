@@ -17,6 +17,15 @@ export class CartService {
   ) {}
 
   async addItem(userId: string, dto: AddItemToCartDto) {
+    const cartItem = await this.repository.findByUserAndProduct(userId, dto.id);
+
+    if (cartItem) {
+      return this.repository.updateQuantity(
+        cartItem.id,
+        cartItem.quantity + dto.quantity,
+      );
+    }
+
     return this.repository.addItem(userId, dto.id, dto.quantity);
   }
 
@@ -35,7 +44,11 @@ export class CartService {
     ]);
 
     return {
-      items,
+      items: items.map((item) => ({
+        productId: item.productId,
+        name: item.product.name,
+        quantity: item.quantity,
+      })),
       total,
       page,
       limit,
