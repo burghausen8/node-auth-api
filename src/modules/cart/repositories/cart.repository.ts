@@ -9,7 +9,7 @@ import { CartItemWithProduct } from '../types/cart-item-with-product.type';
 export class CartRepository {
   constructor(private prisma: PrismaService) {}
 
-  async addItem(userId: string, productId: string, quantity: number) {
+  addItem(userId: string, productId: string, quantity: number) {
     return this.prisma.cartItem.create({
       data: {
         quantity,

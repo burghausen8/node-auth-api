@@ -33,11 +33,6 @@ export class CartService {
     page = page ?? 1;
     limit = limit ?? 10;
     const skip = (page - 1) * limit;
-    console.log({
-      userId,
-      skip,
-      limit,
-    });
     const [items, total] = await Promise.all([
       this.repository.findMany(userId, skip, limit),
       this.repository.count(userId),
