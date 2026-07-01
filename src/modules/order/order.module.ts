@@ -12,5 +12,6 @@ import { CartModule } from '../cart/cart.module';
   controllers: [OrderController],
   providers: [OrderService, OrderRepository],
   imports: [PrismaModule, AuthModule, CartModule],
+  exports: [OrderService],
 })
 export class OrderModule {}

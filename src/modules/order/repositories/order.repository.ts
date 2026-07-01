@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { CartItem, Prisma } from '@prisma/client';
+import { CartItem, OrderStatus, Prisma } from '@prisma/client';
 import { firstValueFrom } from 'rxjs';
 import { CartItemWithProduct } from 'src/modules/cart/types/cart-item-with-product.type';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -74,6 +74,17 @@ export class OrderRepository {
       });
 
       return order;
+    });
+  }
+
+  async updateStatus(orderId: string, status: OrderStatus) {
+    return this.prisma.order.update({
+      where: {
+        id: orderId,
+      },
+      data: {
+        status,
+      },
     });
   }
 }

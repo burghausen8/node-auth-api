@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { OrderRepository } from './repositories/order.repository';
 import { CartService } from '../cart/cart.service';
+import { OrderStatus } from '@prisma/client';
 
 @Injectable()
 export class OrderService {
@@ -27,5 +28,9 @@ export class OrderService {
       total,
     );
     return order;
+  }
+
+  async confirmPayment(orderId: string) {
+    return this.orderRepository.updateStatus(orderId, OrderStatus.PAID);
   }
 }

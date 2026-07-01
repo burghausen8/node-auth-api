@@ -5,6 +5,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { OrderModule } from './modules/order/order.module';
     PrismaModule,
     CartModule,
     OrderModule,
+    PaymentModule,
+    RabbitMQModule,
   ],
 })
 export class AppModule {}
