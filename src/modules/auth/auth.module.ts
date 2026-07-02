@@ -8,9 +8,12 @@ import { PrismaModule } from '../../prisma/prisma.module';
 import { AuthRepository } from './auth.repository';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { RabbitMQModule } from 'src/rabbitmq/rabbitmq.module';
+import { AuthPublisher } from './publishers/auth.publisher';
 
 @Module({
   imports: [
+    RabbitMQModule,
     PrismaModule,
     PassportModule,
     JwtModule.register({
@@ -21,7 +24,7 @@ import { PassportModule } from '@nestjs/passport';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthRepository, JwtStrategy],
+  providers: [AuthService, AuthRepository, JwtStrategy, AuthPublisher],
   exports: [JwtModule],
 })
 export class AuthModule {}

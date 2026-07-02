@@ -7,6 +7,7 @@ import { CartModule } from './modules/cart/cart.module';
 import { OrderModule } from './modules/order/order.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
+import { EmailModule } from './modules/email/email.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
     CartModule,
     OrderModule,
     PaymentModule,
+    EmailModule,
     RabbitMQModule,
   ],
 })

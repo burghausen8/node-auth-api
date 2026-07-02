@@ -4,6 +4,7 @@ import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import { RABBITMQ_CHANNEL } from 'src/rabbitmq/rabbitmq.constants';
 import { OrderService } from 'src/modules/order/order.service';
+import { RabbitMQQueues } from 'src/rabbitmq/queues';
 
 @Injectable()
 export class PaymentConsumer implements OnModuleInit {
@@ -18,7 +19,7 @@ export class PaymentConsumer implements OnModuleInit {
 
   async onModuleInit() {
     await this.channel.consume(
-      'payment.confirmed',
+      RabbitMQQueues.PAYMENT_CONFIRMED,
       this.handleMessage.bind(this),
     );
 

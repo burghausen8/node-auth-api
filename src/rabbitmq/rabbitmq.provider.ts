@@ -2,6 +2,7 @@ import { Provider } from '@nestjs/common';
 import { connect } from 'amqplib';
 
 import { RABBITMQ_CHANNEL } from './rabbitmq.constants';
+import { RabbitMQQueues } from './queues';
 
 export const RabbitMQProvider: Provider = {
   provide: RABBITMQ_CHANNEL,
@@ -11,7 +12,11 @@ export const RabbitMQProvider: Provider = {
 
     const channel = await connection.createChannel();
 
-    await channel.assertQueue('payment.confirmed', {
+    await channel.assertQueue(RabbitMQQueues.PAYMENT_CONFIRMED, {
+      durable: true,
+    });
+
+    await channel.assertQueue(RabbitMQQueues.USER_REGISTERED, {
       durable: true,
     });
 

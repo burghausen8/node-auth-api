@@ -2,6 +2,7 @@ import type { Channel } from 'amqplib';
 import { Inject, Injectable } from '@nestjs/common';
 import { RABBITMQ_CHANNEL } from 'src/rabbitmq/rabbitmq.constants';
 import { PaymentWebhookDto } from '../dtos/payment-webhook.dto';
+import { RabbitMQQueues } from 'src/rabbitmq/queues';
 
 @Injectable()
 export class PaymentPublisher {
@@ -12,7 +13,7 @@ export class PaymentPublisher {
 
   async publish(dto: PaymentWebhookDto) {
     this.channel.sendToQueue(
-      'payment.confirmed',
+      RabbitMQQueues.PAYMENT_CONFIRMED,
 
       Buffer.from(JSON.stringify(dto)),
 
