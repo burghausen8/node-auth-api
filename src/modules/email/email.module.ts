@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { EmailConsumer } from './consumers/email.consumer';
-import { SmtpProvider } from './providers/smtp.provider';
+import { SmtpProvider } from './providers/mail.provider';
 import { EmailService } from './services/email.service';
 import { RabbitMQModule } from 'src/rabbitmq/rabbitmq.module';
 
