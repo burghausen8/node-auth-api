@@ -8,7 +8,7 @@ export const RabbitMQProvider: Provider = {
   provide: RABBITMQ_CHANNEL,
 
   useFactory: async () => {
-    const connection = await connect('amqp://guest:guest@localhost:5672');
+    const connection = await connect(process.env.RABBITMQ_URL!);
 
     const channel = await connection.createChannel();
 
