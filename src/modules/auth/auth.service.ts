@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   UnauthorizedException,
@@ -8,6 +9,8 @@ import { JwtService } from '@nestjs/jwt';
 
 import { AuthRepository } from './auth.repository';
 import { AuthPublisher } from './publishers/auth.publisher';
+import { differenceInSeconds } from 'date-fns';
+import { ValidateVerificationTokenDto } from './dto/validate-verification-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -77,6 +80,65 @@ export class AuthService {
       id: user.id,
       email: user.email,
     };
+  }
+
+  async resendVerification(email: string): Promise<void> {
+    const user = await this.authRepository.findByEmail(email);
+
+    if (!user) {
+      return;
+    }
+
+    if (user.isVerified) {
+      return;
+    }
+
+    const now = new Date();
+
+    if (differenceInSeconds(now, user.updatedAt) < 60) {
+      throw new BadRequestException(
+        'Aguarde 60 segundos para solicitar um novo código.',
+      );
+    }
+
+    const verificationCode = this.generateVerificationCode();
+
+    const expiresAt = this.generateVerificationExpiration();
+
+    await this.authRepository.resendVerificationEmailTransaction(
+      user.id,
+      verificationCode,
+      expiresAt,
+    );
+
+    this.authPublisher.publishUserRegistered({
+      userId: user.id,
+      email: user.email,
+      verificationCode,
+    });
+  }
+
+  async validateVerificationToken(dto: ValidateVerificationTokenDto) {
+    const user = await this.authRepository.findByEmail(dto.email);
+
+    if (!user || user.isVerified) {
+      return;
+    }
+
+    const verificationToken = await this.authRepository.findVerificationToken(
+      user.id,
+      dto.token,
+    );
+
+    if (!verificationToken) {
+      throw new BadRequestException('Token inválido');
+    }
+
+    if (verificationToken.expiresAt < new Date()) {
+      throw new BadRequestException('Token expirado');
+    }
+
+    await this.authRepository.validateUser(user.id);
   }
 
   private generateVerificationCode(): string {

@@ -20,33 +20,6 @@ export class AuthRepository {
     });
   }
 
-  createVerificationToken(userId: string, code: string, expiresAt: Date) {
-    return this.prisma.verificationToken.create({
-      data: {
-        code,
-        expiresAt,
-        type: VerificationTokenType.EMAIL_VERIFICATION,
-        user: {
-          connect: {
-            id: userId,
-          },
-        },
-      },
-    });
-  }
-
-  findVerificationToken(code: string) {
-    return this.prisma.verificationToken.findFirst({
-      where: {
-        code,
-        type: VerificationTokenType.EMAIL_VERIFICATION,
-      },
-      include: {
-        user: true,
-      },
-    });
-  }
-
   verifyUser(userId: string) {
     return this.prisma.user.update({
       where: {
@@ -75,12 +48,86 @@ export class AuthRepository {
     });
   }
 
-  findVerificationTokenByUser(userId: string) {
+  findVerificationToken(userId: string, code: string) {
     return this.prisma.verificationToken.findFirst({
       where: {
         userId,
-        type: VerificationTokenType.EMAIL_VERIFICATION,
+        code,
       },
+    });
+  }
+
+  findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+  }
+
+  createVerificationToken(userId: string, code: string, expiresAt: Date) {
+    return this.prisma.verificationToken.create({
+      data: {
+        code,
+        expiresAt,
+        type: VerificationTokenType.EMAIL_VERIFICATION,
+        user: {
+          connect: {
+            id: userId,
+          },
+        },
+      },
+    });
+  }
+
+  async resendVerificationEmailTransaction(
+    userId: string,
+    code: string,
+    expiresAt: Date,
+  ) {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.verificationToken.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      await tx.verificationToken.create({
+        data: {
+          code,
+          expiresAt,
+          type: VerificationTokenType.EMAIL_VERIFICATION,
+          user: {
+            connect: {
+              id: userId,
+            },
+          },
+        },
+      });
+
+      await tx.user.update({
+        where: {
+          id: userId,
+        },
+        data: { updatedAt: new Date() },
+      });
+    });
+  }
+
+  async validateUser(userId: string) {
+    await this.prisma.$transaction(async (tx) => {
+      await tx.verificationToken.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      await tx.user.update({
+        where: {
+          id: userId,
+        },
+        data: { isVerified: true },
+      });
     });
   }
 }
