@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import {
   CreateCheckoutRequest,
   CreateCheckoutResponse,
@@ -12,6 +12,7 @@ import { Preference } from 'mercadopago';
 @Injectable()
 export class MercadoPagoProvider implements PaymentProvider {
   private readonly client: MercadoPagoConfig;
+  private readonly logger = new Logger(MercadoPagoProvider.name);
 
   constructor(private readonly config: ConfigService) {
     this.client = new MercadoPagoConfig({
@@ -39,8 +40,11 @@ export class MercadoPagoProvider implements PaymentProvider {
       },
     });
 
+    this.logger.log('Create payment mercado pago');
+    this.logger.log(response);
+
     return {
-      preferenceId: response.external_reference!,
+      preferenceId: response.id!,
       paymentUrl: response.init_point!,
     };
   }
