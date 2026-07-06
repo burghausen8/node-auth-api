@@ -8,6 +8,7 @@ import { OrderModule } from './modules/order/order.module';
 import { PaymentModule } from './modules/payment/payment.module';
 import { RabbitMQModule } from './rabbitmq/rabbitmq.module';
 import { EmailModule } from './modules/email/email.module';
+import { CheckoutModule } from './modules/checkout/checkout.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { EmailModule } from './modules/email/email.module';
     AuthModule,
     PrismaModule,
     CartModule,
+    CheckoutModule,
     OrderModule,
     PaymentModule,
     EmailModule,

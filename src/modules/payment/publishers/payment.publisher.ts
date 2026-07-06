@@ -13,7 +13,7 @@ export class PaymentPublisher {
 
   async publish(dto: PaymentWebhookDto) {
     this.channel.sendToQueue(
-      RabbitMQQueues.PAYMENT_CONFIRMED,
+      RabbitMQQueues.PAYMENT_RECEIVED,
 
       Buffer.from(JSON.stringify(dto)),
 

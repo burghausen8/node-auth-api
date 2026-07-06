@@ -3,8 +3,9 @@ import type { Channel } from 'amqplib';
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import { RABBITMQ_CHANNEL } from 'src/rabbitmq/rabbitmq.constants';
-import { OrderService } from 'src/modules/order/order.service';
 import { RabbitMQQueues } from 'src/rabbitmq/queues';
+import { PaymentReceivedHandler } from '../handler/payment-received.handler';
+import { PaymentWebhookDto } from '../dtos/payment-webhook.dto';
 
 @Injectable()
 export class PaymentConsumer implements OnModuleInit {
@@ -14,16 +15,16 @@ export class PaymentConsumer implements OnModuleInit {
     @Inject(RABBITMQ_CHANNEL)
     private readonly channel: Channel,
 
-    private readonly orderService: OrderService,
+    private readonly handler: PaymentReceivedHandler,
   ) {}
 
   async onModuleInit() {
     await this.channel.consume(
-      RabbitMQQueues.PAYMENT_CONFIRMED,
+      RabbitMQQueues.PAYMENT_RECEIVED,
       this.handleMessage.bind(this),
     );
 
-    this.logger.log('Listening payment.confirmed...');
+    this.logger.log('Listening payment.received...');
   }
 
   private async handleMessage(message: ConsumeMessage | null) {
@@ -32,11 +33,15 @@ export class PaymentConsumer implements OnModuleInit {
     }
 
     try {
-      const content = JSON.parse(message.content.toString());
+      const content = JSON.parse(
+        message.content.toString(),
+      ) as PaymentWebhookDto;
 
-      this.logger.log(`Payment received for order ${content.orderId}`);
+      this.logger.log(
+        `Payment received for order ${content.data.external_reference}`,
+      );
 
-      await this.orderService.confirmPayment(content.orderId);
+      await this.handler.execute(content.data);
 
       this.channel.ack(message);
     } catch (error) {

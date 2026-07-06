@@ -1,4 +1,4 @@
 export const RabbitMQQueues = {
   USER_REGISTERED: 'user.registered',
-  PAYMENT_CONFIRMED: 'payment.confirmed',
+  PAYMENT_RECEIVED: 'payment.received',
 } as const;

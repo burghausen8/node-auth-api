@@ -12,7 +12,7 @@ export const RabbitMQProvider: Provider = {
 
     const channel = await connection.createChannel();
 
-    await channel.assertQueue(RabbitMQQueues.PAYMENT_CONFIRMED, {
+    await channel.assertQueue(RabbitMQQueues.PAYMENT_RECEIVED, {
       durable: true,
     });
 

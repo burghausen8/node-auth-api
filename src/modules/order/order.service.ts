@@ -1,36 +1,30 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { OrderRepository } from './repositories/order.repository';
 import { CartService } from '../cart/cart.service';
 import { OrderStatus } from '@prisma/client';
+import { PaymentService } from '../payment/payment.service';
+import {
+  PaymentStatus,
+  PaymentWebhookDataDto,
+} from '../payment/dtos/payment-webhook.dto';
 
 @Injectable()
 export class OrderService {
-  constructor(
-    private orderRepository: OrderRepository,
-    private readonly cartService: CartService,
-  ) {}
+  constructor(private orderRepository: OrderRepository) {}
 
-  async create(userId: string) {
-    const cart = await this.cartService.findItemsByUser(userId);
+  private readonly logger = new Logger(OrderService.name);
 
-    if (cart.items.length < 1) {
-      throw new BadRequestException('O Carrinho esta vazio');
-    }
-
-    const total = cart.items.reduce(
-      (acc, item) => acc + item.quantity * Number(item.product.price),
-      0,
-    );
-
-    const order = await this.orderRepository.checkout(
-      userId,
-      cart.items,
-      total,
-    );
-    return order;
+  create(userId: string, items: any[], total: number) {
+    return this.orderRepository.checkout(userId, items, total);
   }
 
-  async confirmPayment(orderId: string) {
-    return this.orderRepository.updateStatus(orderId, OrderStatus.PAID);
+  async processPayment(data: PaymentWebhookDataDto) {
+    if (data.status === PaymentStatus.PROCESSED) {
+      this.logger.log(`Payment processes for order ${data.external_reference}`);
+      return this.orderRepository.updateStatus(
+        data.external_reference,
+        OrderStatus.PAID,
+      );
+    }
   }
 }
