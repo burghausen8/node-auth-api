@@ -29,10 +29,9 @@ export class CheckoutService {
 
     const order = await this.orderService.create(userId, cart.items, total);
 
-    const checkout = await this.paymentService.createCheckout(
-      order,
-      cart.items,
-    );
+    const checkout = await this.paymentService.createCheckout(cart.items);
+
+    await this.orderService.updatePaymentId(order.id, checkout.preferenceId);
 
     return {
       order,

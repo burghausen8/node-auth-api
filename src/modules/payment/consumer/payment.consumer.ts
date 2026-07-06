@@ -37,9 +37,7 @@ export class PaymentConsumer implements OnModuleInit {
         message.content.toString(),
       ) as PaymentWebhookDto;
 
-      this.logger.log(
-        `Payment received for order ${content.data.external_reference}`,
-      );
+      this.logger.log(`Payment received for order ${content.data.id}`);
       this.logger.log(content);
 
       await this.handler.execute(content.data);

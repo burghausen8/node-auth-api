@@ -14,6 +14,7 @@ import type {
 import { OrderRepository } from '../order/repositories/order.repository';
 import { Order } from '@prisma/client';
 import { CartItemWithProduct } from '../cart/types/cart-item-with-product.type';
+import { randomInt } from 'crypto';
 
 @Injectable()
 export class PaymentService {
@@ -32,7 +33,7 @@ export class PaymentService {
     };
   }
 
-  async createCheckout(order: Order, items: CartItemWithProduct[]) {
+  async createCheckout(items: CartItemWithProduct[]) {
     const itemsCheckout: CheckoutItem[] = items.map((item) => ({
       id: item.id,
       title: item.product.name,
@@ -41,7 +42,7 @@ export class PaymentService {
     }));
 
     const checkout = await this.provider.createCheckout({
-      externalReference: order.id,
+      externalReference: generatePaymentId(),
       items: itemsCheckout,
     });
 
@@ -63,4 +64,14 @@ export class PaymentService {
   cancel(paymentId: string) {
     return this.provider.cancel(paymentId);
   }
+}
+
+export function generatePaymentId(): string {
+  let paymentId = '';
+
+  while (paymentId.length < 16) {
+    paymentId += randomInt(0, 10).toString();
+  }
+
+  return paymentId;
 }

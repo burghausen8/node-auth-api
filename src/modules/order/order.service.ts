@@ -20,11 +20,12 @@ export class OrderService {
 
   async processPayment(data: PaymentWebhookDataDto) {
     if (data.status === PaymentStatus.PROCESSED) {
-      this.logger.log(`Payment processes for order ${data.external_reference}`);
-      return this.orderRepository.updateStatus(
-        data.external_reference,
-        OrderStatus.PAID,
-      );
+      this.logger.log(`Payment processes for order ${data.id}`);
+      return this.orderRepository.updateStatus(data.id, OrderStatus.PAID);
     }
+  }
+
+  async updatePaymentId(orderId: string, paymentId: string) {
+    return this.orderRepository.updatePaymentId(orderId, paymentId);
   }
 }

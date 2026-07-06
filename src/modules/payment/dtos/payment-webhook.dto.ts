@@ -21,7 +21,7 @@ export class PaymentWebhookDataDto {
   })
   @IsString()
   @IsNotEmpty()
-  external_reference: string;
+  id: string;
 
   @ApiProperty({
     enum: PaymentStatus,
