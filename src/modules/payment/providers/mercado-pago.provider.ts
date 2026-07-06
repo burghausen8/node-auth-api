@@ -40,7 +40,7 @@ export class MercadoPagoProvider implements PaymentProvider {
     });
 
     return {
-      preferenceId: response.id!,
+      preferenceId: response.external_reference!,
       paymentUrl: response.init_point!,
     };
   }
