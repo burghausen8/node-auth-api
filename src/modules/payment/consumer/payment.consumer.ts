@@ -40,6 +40,7 @@ export class PaymentConsumer implements OnModuleInit {
       this.logger.log(
         `Payment received for order ${content.data.external_reference}`,
       );
+      this.logger.log(content);
 
       await this.handler.execute(content.data);
 
