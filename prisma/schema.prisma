@@ -99,6 +99,8 @@ model Order {
 
   user User @relation(fields: [userId], references: [id])
 
+  paymentId   String?
+
   items OrderItem[]
 }
 
