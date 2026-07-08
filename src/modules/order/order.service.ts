@@ -3,10 +3,8 @@ import { OrderRepository } from './repositories/order.repository';
 import { CartService } from '../cart/cart.service';
 import { OrderStatus } from '@prisma/client';
 import { PaymentService } from '../payment/payment.service';
-import {
-  PaymentStatus,
-  PaymentWebhookDataDto,
-} from '../payment/dtos/payment-webhook.dto';
+import { PaymentWebhookDataDto } from '../payment/dtos/payment-webhook.dto';
+import { PaymentDetails } from '../payment/interfaces/payment-gateway.interface';
 
 @Injectable()
 export class OrderService {
@@ -18,8 +16,12 @@ export class OrderService {
     return this.orderRepository.checkout(userId, items, total);
   }
 
-  async processPayment(data: PaymentWebhookDataDto) {
-    if (data.status === PaymentStatus.PROCESSED) {
+  async processPayment(data: PaymentDetails) {
+    const order = this.orderRepository.findById(data.id);
+    this.logger.log('Init Payment process');
+    this.logger.log(order);
+
+    if (order !== undefined && data.status === 'approved') {
       this.logger.log(`Payment processes for order ${data.id}`);
       return this.orderRepository.updateStatus(data.id, OrderStatus.PAID);
     }

@@ -5,7 +5,7 @@ import {
   PaymentDetails,
   PaymentProvider,
 } from '../interfaces/payment-gateway.interface';
-import { MercadoPagoConfig } from 'mercadopago';
+import { MercadoPagoConfig, Payment } from 'mercadopago';
 import { ConfigService } from '@nestjs/config';
 import { Preference } from 'mercadopago';
 
@@ -48,9 +48,21 @@ export class MercadoPagoProvider implements PaymentProvider {
       paymentUrl: response.init_point!,
     };
   }
+  async getPaymentInfo(paymentId: string): Promise<PaymentDetails> {
+    const payment = new Payment(this.client);
 
-  async getPayment(paymentId: string): Promise<PaymentDetails> {
-    throw new Error('Not implemented');
+    const response = await payment.get({
+      id: paymentId,
+    });
+
+    this.logger.log(`Payment ${paymentId} retrieved`);
+    this.logger.log(response);
+
+    return {
+      id: response.id!.toString(),
+      status: response.status ?? 'unknown',
+      externalReference: response.external_reference ?? undefined,
+    };
   }
 
   async cancel(paymentId: string): Promise<void> {

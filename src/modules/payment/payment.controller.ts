@@ -19,6 +19,7 @@ export class PaymentController {
     description: 'Webhook received successfully',
   })
   receiveWebhook(@Body() dto: PaymentWebhookDto) {
+    //TODO: validar o token aqui
     return this.paymentService.receiveWebhook(dto);
   }
 }

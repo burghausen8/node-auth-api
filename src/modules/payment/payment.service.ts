@@ -33,7 +33,7 @@ export class PaymentService {
     };
   }
 
-  async createCheckout(items: CartItemWithProduct[]) {
+  async createCheckout(items: CartItemWithProduct[], orderId: string) {
     const itemsCheckout: CheckoutItem[] = items.map((item) => ({
       id: item.id,
       title: item.product.name,
@@ -42,7 +42,7 @@ export class PaymentService {
     }));
 
     const checkout = await this.provider.createCheckout({
-      externalReference: generatePaymentId(),
+      externalReference: orderId,
       items: itemsCheckout,
     });
 
@@ -57,21 +57,11 @@ export class PaymentService {
     return checkout;
   }
 
-  getPayment(paymentId: string) {
-    return this.provider.getPayment(paymentId);
+  getPaymentInfo(paymentId: string) {
+    return this.provider.getPaymentInfo(paymentId);
   }
 
   cancel(paymentId: string) {
     return this.provider.cancel(paymentId);
   }
-}
-
-export function generatePaymentId(): string {
-  let paymentId = '';
-
-  while (paymentId.length < 16) {
-    paymentId += randomInt(0, 10).toString();
-  }
-
-  return paymentId;
 }

@@ -1,37 +1,37 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
-  IsEnum,
   IsNotEmpty,
   IsObject,
   IsString,
   ValidateNested,
 } from 'class-validator';
 
-export enum PaymentStatus {
-  PROCESSED = 'processed',
-  PENDING = 'pending',
-  CANCELLED = 'cancelled',
-  FAILED = 'failed',
-}
-
 export class PaymentWebhookDataDto {
   @ApiProperty({
-    example: 'ext_ref_1234',
+    example: '123456789',
+    description: 'ID do pagamento no Mercado Pago',
   })
   @IsString()
   @IsNotEmpty()
   id: string;
-
-  @ApiProperty({
-    enum: PaymentStatus,
-    example: PaymentStatus.PROCESSED,
-  })
-  @IsEnum(PaymentStatus)
-  status: PaymentStatus;
 }
 
 export class PaymentWebhookDto {
+  @ApiProperty({
+    example: 'payment.updated',
+  })
+  @IsString()
+  @IsNotEmpty()
+  action: string;
+
+  @ApiProperty({
+    example: 'payment',
+  })
+  @IsString()
+  @IsNotEmpty()
+  type: string;
+
   @ApiProperty({
     type: PaymentWebhookDataDto,
   })

@@ -6,6 +6,7 @@ import { RABBITMQ_CHANNEL } from 'src/rabbitmq/rabbitmq.constants';
 import { RabbitMQQueues } from 'src/rabbitmq/queues';
 import { PaymentReceivedHandler } from '../handler/payment-received.handler';
 import { PaymentWebhookDto } from '../dtos/payment-webhook.dto';
+import { PaymentService } from '../payment.service';
 
 @Injectable()
 export class PaymentConsumer implements OnModuleInit {
@@ -14,7 +15,7 @@ export class PaymentConsumer implements OnModuleInit {
   constructor(
     @Inject(RABBITMQ_CHANNEL)
     private readonly channel: Channel,
-
+    private readonly service: PaymentService,
     private readonly handler: PaymentReceivedHandler,
   ) {}
 
@@ -39,8 +40,8 @@ export class PaymentConsumer implements OnModuleInit {
 
       this.logger.log(`Payment received for order ${content.data.id}`);
       this.logger.log(content);
-
-      await this.handler.execute(content.data);
+      const infoPayment = await this.service.getPaymentInfo(content.data.id);
+      await this.handler.execute(infoPayment);
 
       this.channel.ack(message);
     } catch (error) {

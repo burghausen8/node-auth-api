@@ -25,7 +25,7 @@ export interface PaymentProvider {
     request: CreateCheckoutRequest,
   ): Promise<CreateCheckoutResponse>;
 
-  getPayment(paymentId: string): Promise<PaymentDetails>;
+  getPaymentInfo(paymentId: string): Promise<PaymentDetails>;
 
   cancel(paymentId: string): Promise<void>;
 }
