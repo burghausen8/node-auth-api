@@ -17,7 +17,7 @@ export class OrderService {
   }
 
   async processPayment(data: PaymentDetails) {
-    const order = this.orderRepository.findById(data.id);
+    const order = await this.orderRepository.findById(data.id);
     this.logger.log('Init Payment process');
     this.logger.log(order);
 
