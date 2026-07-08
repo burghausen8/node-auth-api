@@ -77,10 +77,10 @@ export class OrderRepository {
     });
   }
 
-  async updateStatus(paymentId: string, status: OrderStatus) {
+  async updateStatus(orderID: string, status: OrderStatus) {
     return this.prisma.order.update({
       where: {
-        paymentId: paymentId,
+        id: orderID,
       },
       data: {
         status,
