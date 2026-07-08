@@ -39,7 +39,6 @@ export class PaymentConsumer implements OnModuleInit {
       ) as PaymentWebhookDto;
 
       this.logger.log(`Payment received for order ${content.data.id}`);
-      this.logger.log(content);
       const infoPayment = await this.service.getPaymentInfo(content.data.id);
       await this.handler.execute(infoPayment);
 

@@ -40,8 +40,9 @@ export class MercadoPagoProvider implements PaymentProvider {
       },
     });
 
-    this.logger.log('Create payment mercado pago');
-    this.logger.log(response);
+    this.logger.log(
+      `Create payment mercado pago for order ${request.externalReference}`,
+    );
 
     return {
       preferenceId: response.id!,
@@ -56,7 +57,6 @@ export class MercadoPagoProvider implements PaymentProvider {
     });
 
     this.logger.log(`Payment ${paymentId} retrieved`);
-    this.logger.log(response);
 
     return {
       id: response.id!.toString(),

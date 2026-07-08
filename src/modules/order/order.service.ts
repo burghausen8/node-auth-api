@@ -19,11 +19,10 @@ export class OrderService {
   async processPayment(data: PaymentDetails) {
     const order = await this.orderRepository.findById(data.externalReference);
     this.logger.log('Init Payment process');
-    this.logger.log(order);
 
     if (order !== undefined && data.status === 'approved') {
       this.logger.log(`Payment processes for order ${data.id}`);
-      return this.orderRepository.updateStatus(data.id, OrderStatus.PAID);
+      return this.orderRepository.updateStatus(order!.id, OrderStatus.PAID);
     }
   }
 
