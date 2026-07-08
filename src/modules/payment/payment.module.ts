@@ -8,6 +8,7 @@ import { MercadoPagoProvider } from './providers/mercado-pago.provider';
 import { PAYMENT_PROVIDER } from './constants/payment.constants';
 import { OrderModule } from '../order/order.module';
 import { PaymentReceivedHandler } from './handler/payment-received.handler';
+import { PaymentSignatureService } from './signatures/payment.signature.service';
 
 @Module({
   imports: [OrderModule],
@@ -17,6 +18,7 @@ import { PaymentReceivedHandler } from './handler/payment-received.handler';
     PaymentService,
     PaymentPublisher,
     PaymentConsumer,
+    PaymentSignatureService,
     MercadoPagoProvider,
     {
       provide: PAYMENT_PROVIDER,
