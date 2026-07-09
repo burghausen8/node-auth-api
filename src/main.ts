@@ -17,6 +17,14 @@ async function bootstrap() {
 
   SwaggerModule.setup('docs', app, document);
 
+  app.enableCors({
+    origin: [
+      'http://localhost:4200',
+      'https://angular-test-burghausen.vercel.app',
+    ],
+    credentials: true,
+  });
+
   await app.listen(process.env.PORT ?? 3000);
 }
 
