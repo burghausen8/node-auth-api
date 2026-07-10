@@ -20,7 +20,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:4200',
-      'https://angular-test-oe4sjmdsy-burghausen.vercel.app',
+      'https://angular-test-burghausen.vercel.app',
     ],
     credentials: true,
   });
